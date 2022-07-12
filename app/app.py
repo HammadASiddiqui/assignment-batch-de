@@ -40,29 +40,21 @@ def insert_into_tweets_table(tweet_json, db):
     'tweet_language': str(tweet_json['lang']),
     'favorite_count': tweet_json['favorite_count'],
     'retweet_count': tweet_json['retweet_count'],
-    'raw_json':str(tweet_json),
     'user_id': str(tweet_json['user']['id_str'])}
-    query = sqlalchemy.text('''INSERT INTO tweets (tweet_id, created_at, tweet_text, tweet_language,favorite_count,  retweet_count, raw_json, user_id) 
+    query = '''INSERT INTO tweets (tweet_id, created_at, tweet_text, tweet_language,favorite_count,  retweet_count, user_id) 
     VALUES (
         '{tweet_id}',
         timestamp '{created_at}',
         '{tweet_text}',
         '{tweet_language}',
         {favorite_count},
-        '{retweet_count}',
-        '{raw_json}',
+        {retweet_count},
         '{user_id}'
-    );''')#.format(**tweet_dict)
-    print("_____________________________________")
-    print(query)
-    print("_____________________________________")
+    );'''.format(**tweet_dict)
     try:
-        with db.begin() as conn:
-            conn.execute(statement=query, parameters=tweet_dict)
+        db.execute(sqlalchemy.text(query))
     except:
         pass
-
-
 
 #process tweets from pagenated data
 def process_page(page_results, db):
