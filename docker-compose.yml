@@ -1,0 +1,6 @@
+version: "3.8"
+services:
+  db:
+    build: ./db/
+  app :
+    build: ./app/
