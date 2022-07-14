@@ -1,14 +1,14 @@
 import yaml
 from yaml.loader import SafeLoader
 import tweepy
-from sqlalchemy import *
+import sqlalchemy
 
 # intialize connection parameters for postgres database
 def init_db(db_creds):
     db=None
     db_string = 'postgresql://{}:{}@{}:{}/{}'.format(db_creds['db_user'], db_creds['db_pass'], db_creds['db_host'], db_creds['db_port'], db_creds['db_name'])
     try:
-        db = create_engine(db_string)
+        db = sqlalchemy.create_engine(db_string)
     except:
         print("[DB CONNECT ERR]")
     finally:
@@ -28,7 +28,7 @@ def insert_into_users_table(tweet_json, db):
         '{user_url}'
     );'''.format(**user_dict)
     try:
-        db.execute(text(query))
+        db.execute(sqlalchemy.text(query))
     except:
         pass
 
@@ -42,31 +42,25 @@ def insert_into_tweets_table(tweet_json, db):
     'retweet_count': tweet_json['retweet_count'],
     'raw_json':str(tweet_json),
     'user_id': str(tweet_json['user']['id_str'])}
+    query = sqlalchemy.text('''INSERT INTO tweets (tweet_id, created_at, tweet_text, tweet_language,favorite_count,  retweet_count, raw_json, user_id) 
+    VALUES (
+        '{tweet_id}',
+        timestamp '{created_at}',
+        '{tweet_text}',
+        '{tweet_language}',
+        {favorite_count},
+        '{retweet_count}',
+        '{raw_json}',
+        '{user_id}'
+    );''')#.format(**tweet_dict)
     print("_____________________________________")
-    print("Ingesting data for ",tweet_dict['tweet_id']," >>>>>")
-    metadata = MetaData(db)
-
-    tweets = Table('tweets', metadata,
-        Column('tweet_id', String, primary_key=True),
-        Column('created_at', TIMESTAMP, primary_key=True),
-        Column('tweet_text', String),
-        Column('tweet_language', String),
-        Column('favorite_count', Integer),
-        Column('retweet_count', Integer),
-        Column('raw_json', String),
-        Column('user_id', String),
-    )
-    ingest = tweets.insert()
-    
-    ingest.execute(tweet_id=tweet_dict['tweet_id'],
-    created_at=tweet_dict['created_at'],
-    tweet_text=tweet_dict['tweet_text'],
-    tweet_language=tweet_dict['tweet_language'],
-    favorite_count=tweet_dict['favorite_count'],
-    retweet_count=tweet_dict['retweet_count'],
-    raw_json=tweet_dict['raw_json'],
-    user_id=tweet_dict['user_id'])
+    print(query)
     print("_____________________________________")
+    try:
+        with db.begin() as conn:
+            conn.execute(statement=query, parameters=tweet_dict)
+    except:
+        pass
 
 
 
