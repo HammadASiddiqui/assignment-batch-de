@@ -1,16 +1,3 @@
--- CREATE TABLE IF NOT EXISTS numbers (
---     number BIGINT,
---     timestamp BIGINT
--- );
-
-
--- CREATE TABLE IF NOT EXISTS posts (
---     userId INT,
---     id INT,
---     title TEXT,
---     body TEXT,
---     timestamp BIGINT
--- );
 
 CREATE TABLE IF NOT EXISTS tweets (
     tweet_id TEXT,
