@@ -1,0 +1,4 @@
+app.log
+db.log
+.app/api_auth.yaml
+.app/db_creds.yaml

@@ -4,3 +4,4 @@ services:
     build: ./db/
   app :
     build: ./app/
+    
