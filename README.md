@@ -33,8 +33,8 @@ Execute the following commands on the terminal
 ```docker container ps```
 view the DB containers CONTAINER ID and copy it 
 
-```docker exec -it <copied CONTAINER ID> bash  ```
-this will route your terminal to the postgres DB instance
+```docker exec -it <copied CONTAINER ID> bash```
+ this will route your terminal to the postgres DB instance
 
 ```psql postgres://username:secret@localhost:5432/database```
 this command will connect to your Database
